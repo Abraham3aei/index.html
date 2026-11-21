@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwMjAwMzYwMDE1MTA0NjQ1NTE0NSIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzU3MDg3YmFmOGZmMDU3MzJfdGlrdG9rLXRvcDMtbGlrZXJzLW92ZXJsYXkuaHRtbC0yODEifSwiZXhwIjoxNzk1Mjc3MjI5LCJpYXQiOjE3OTUyNzM2MjksImFsZyI6IlJTMjU2In0.I71CGrBKe9KmhJbgdEEO8G6FY1KqayyqYIHf6IYyDMc0kVWy_NKPkREAMc3Yzoor2UezAr1ONMfJEWtcV-iHvvwwhua-i8H95twcIS7sgCq9621Qe07N1JHaleUdpuohvMVNWtEQXNqQsRmN0k1OX9mUMBL3yorersWC3ePTCesQDRpWd1HSIedVkx872BbvWtlI_jnA6lrJy4KZvvPKfYnm1h4ZoZaNcEb--Vnk0wDf-05Ttd68H51Lit2-Xv4tIIceyTo2oTHkmsCM0vSGD7PTJMqi_k1Fz2OtOLW_VV82oumLQSXBtb0vEdEhE4NiWtHKcS7fpNbgcJ1prm_uOw","c_57087baf8ff05732_tiktok-top3-likers-overlay.html-281")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
+G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
+16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
+(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  const OVERLAY_SELECTOR =
+    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
+
+  function isVisibleOverlay(element) {
+    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
+      return false;
+    }
+    if (window.getComputedStyle(element).visibility === 'hidden') {
+      return false;
+    }
+    for (let cur = element; cur; cur = cur.parentElement) {
+      if (window.getComputedStyle(cur).display === 'none') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function hasOpenOverlay() {
+    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
+    for (let i = 0; i < candidates.length; i++) {
+      if (isVisibleOverlay(candidates[i])) {
+        return true;
+      }
+    }
+    try {
+      if (document.querySelector('[popover]:popover-open')) {
+        return true;
+      }
+    } catch (e) {
+      // Ignore engines that do not support :popover-open.
+    }
+    return false;
+  }
+
+  function isNonEmptySearchInput(target) {
+    return (
+      Boolean(target) &&
+      target.tagName === 'INPUT' &&
+      typeof target.type === 'string' &&
+      target.type.toLowerCase() === 'search' &&
+      typeof target.value === 'string' &&
+      target.value.length > 0
+    );
+  }
+
+  function shouldIgnoreEscape(event) {
+    return (
+      event.key !== 'Escape' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.repeat ||
+      event.keyCode === 229 ||
+      isNonEmptySearchInput(event.target)
+    );
+  }
+
+  let shouldIgnoreCaptureState = false;
+
+  window.addEventListener(
+    'keydown',
+    function(event) {
+      if (event.key === 'Escape') {
+        shouldIgnoreCaptureState =
+          hasOpenOverlay() || isNonEmptySearchInput(event.target);
+      }
+    },
+    {capture: true},
+  );
+
+  window.addEventListener('keydown', function(event) {
+    if (
+      shouldIgnoreEscape(event) ||
+      event.defaultPrevented ||
+      shouldIgnoreCaptureState
+    ) {
+      return;
+    }
+    const wasBlockedOnCapture = shouldIgnoreCaptureState;
+    queueMicrotask(function() {
+      if (event.defaultPrevented || wasBlockedOnCapture) {
+        return;
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({'type': 'escapeKey'}, '*');
+      }
+    });
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok LIVE Top 3 Likers Overlay — Marvel Aura Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron & Rajdhani for sharp esports / hero readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Rajdhani:wght@600;700&amp;display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: transparent;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Background Modes (Pure Transparent Default for OBS / TikTok LIVE Studio) */
+        body.bg-transparent {
+            background: transparent !important;
+        }
+        body.bg-checker {
+            background-color: #0d1017;
+            background-image:
+                linear-gradient(45deg, #171c28 25%, transparent 25%),
+                linear-gradient(-45deg, #171c28 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #171c28 75%),
+                linear-gradient(-45deg, transparent 75%, #171c28 75%);
+            background-size: 24px 24px;
+            background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+        }
+        body.bg-green {
+            background-color: #00FF00 !important;
+        }
+        body.bg-dark {
+            background-color: #07090e !important;
+        }
+
+        /* Background VFX Canvas Layer (z-index: 1 — Renders Captain America Flames Behind Circle) */
+        #vfx-back-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Foreground VFX Canvas Layer (z-index: 15 — Renders Iron Man HUD Accents & Thor Lightning Arcs) */
+        #vfx-front-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        /* Subtle Power Levitation */
+        @keyframes heroFloat1 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes heroFloat2 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes heroFloat3 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .float-1 { animation: heroFloat1 3.4s ease-in-out infinite; }
+        .float-2 { animation: heroFloat2 3.9s ease-in-out infinite 0.4s; }
+        .float-3 { animation: heroFloat3 4.2s ease-in-out infinite 0.8s; }
+
+        /* Impact Surge Pulse on Like/Rank Update */
+        @keyframes surgeScale {
+            0% { transform: scale(1); }
+            35% { transform: scale(1.13); }
+            70% { transform: scale(0.97); }
+            100% { transform: scale(1); }
+        }
+        .pop-animate {
+            animation: surgeScale 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Bold Red Circular Rings for All 3 Heroes (30% Reduced Glow & Bloom) */
+        .hero-red-ring {
+            border: 4px solid #ff1e27;
+            background: #090b10;
+            box-shadow:
+                inset 0 0 8px rgba(0, 0, 0, 0.92),
+                0 0 0 2px #260406,
+                0 0 11px rgba(255, 30, 39, 0.58);
+        }
+
+        /* #1 Captain America Crimson-Gold Ring Rim (30% Less Glowy) */
+        .ring-cap {
+            border-color: #ff2e1f;
+            box-shadow:
+                inset 0 0 10px rgba(0, 0, 0, 0.95),
+                0 0 0 2px #2b0404,
+                0 0 14px 2px rgba(255, 110, 0, 0.65),
+                0 0 26px 5px rgba(255, 30, 39, 0.52);
+        }
+
+        /* #2 Iron Man Mark 85 Red / Gold / Arc Cyan Rim (30% Less Glowy) */
+        .ring-iron {
+            border-color: #ff2424;
+            box-shadow:
+                inset 0 0 10px rgba(56, 189, 248, 0.35),
+                0 0 0 2px #290507,
+                0 0 11px 1px rgba(245, 158, 11, 0.62),
+                0 0 21px 4px rgba(220, 38, 38, 0.5);
+        }
+
+        /* #3 Thor Storm-Charged Red & Electric Cyan Rim (30% Less Glowy) */
+        .ring-thor {
+            border-color: #ff1e27;
+            box-shadow:
+                inset 0 0 10px rgba(56, 189, 248, 0.38),
+                0 0 0 2px #0b1528,
+                0 0 11px 1px rgba(56, 189, 248, 0.58),
+                0 0 21px 4px rgba(255, 30, 39, 0.45);
+        }
+
+        /* High-Contrast Floating Stream Text (No Heavy Box Backdrop Needed, 100% Readable Over Gameplay) */
+        .stream-text-outline {
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.98),
+                0 0 8px rgba(0, 0, 0, 0.95),
+                -1px -1px 0 #000,
+                 1px -1px 0 #000,
+                -1px  1px 0 #000,
+                 1px  1px 0 #000;
+        }
+
+        .name-pill {
+            background: rgba(8, 10, 15, 0.84);
+            border: 1.5px solid rgba(255, 30, 39, 0.78);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.85), 0 0 7px rgba(255, 30, 39, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Floating Like Heart Burst Particle */
+        @keyframes heartFloatUp {
+            0% {
+                transform: translate(-50%, 0) scale(0.75);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(-50% + var(--dx, 0px)), -64px) scale(1.25);
+                opacity: 0;
+            }
+        }
+        .like-spark {
+            position: absolute;
+            pointer-events: none;
+            z-index: 45;
+            animation: heartFloatUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Custom Scrollbar for Drawer */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 30, 39, 0.5); border-radius: 9999px; }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-y-0{top:0px;bottom:0px}.bottom-4{bottom:1rem}.left-1\/2{left:50%}.right-0{right:0px}.right-4{right:1rem}.top-4{top:1rem}.-bottom-1{bottom:-0.25rem}.-bottom-2{bottom:-0.5rem}.-right-1{right:-0.25rem}.z-50{z-index:50}.z-\[5\]{z-index:5}.z-20{z-index:20}.col-span-2{grid-column:span 2 / span 2}.col-span-3{grid-column:span 3 / span 3}.mt-1\.5{margin-top:0.375rem}.-mb-2\.5{margin-bottom:-0.625rem}.-mb-3{margin-bottom:-0.75rem}.mt-0\.5{margin-top:0.125rem}.mt-3{margin-top:0.75rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2\.5{height:0.625rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-20{height:5rem}.h-24{height:6rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-2\.5{width:0.625rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-full{width:100%}.w-14{width:3.5rem}.w-16{width:4rem}.w-20{width:5rem}.w-24{width:6rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.max-w-\[125px\]{max-width:125px}.flex-1{flex:1 1 0%}.origin-top{transform-origin:top}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-full{--tw-translate-x:100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-5{--tw-translate-y:-1.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-45{--tw-rotate:45deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.list-inside{list-style-position:inside}.list-decimal{list-style-type:decimal}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-start{justify-content:flex-start}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-6{gap:1.5rem}.gap-1{gap:0.25rem}.space-y-0\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.125rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.125rem * var(--tw-space-y-reverse))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-emerald-300\/70{border-color:rgb(110 231 183 / 0.7)}.border-red-400\/60{border-color:rgb(248 113 113 / 0.6)}.border-red-500{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.border-red-500\/70{border-color:rgb(239 68 68 / 0.7)}.border-red-700{--tw-border-opacity:1;border-color:rgb(185 28 28 / var(--tw-border-opacity, 1))}.border-red-900\/50{border-color:rgb(127 29 29 / 0.5)}.border-red-900\/60{border-color:rgb(127 29 29 / 0.6)}.border-red-900\/70{border-color:rgb(127 29 29 / 0.7)}.border-zinc-400{--tw-border-opacity:1;border-color:rgb(161 161 170 / var(--tw-border-opacity, 1))}.border-zinc-600{--tw-border-opacity:1;border-color:rgb(82 82 91 / var(--tw-border-opacity, 1))}.border-zinc-700{--tw-border-opacity:1;border-color:rgb(63 63 70 / var(--tw-border-opacity, 1))}.border-amber-300\/80{border-color:rgb(252 211 77 / 0.8)}.border-amber-400\/90{border-color:rgb(251 191 36 / 0.9)}.border-sky-400\/90{border-color:rgb(56 189 248 / 0.9)}.border-white\/80{border-color:rgb(255 255 255 / 0.8)}.border-zinc-800{--tw-border-opacity:1;border-color:rgb(39 39 42 / var(--tw-border-opacity, 1))}.bg-\[\#00FF00\]{--tw-bg-opacity:1;background-color:rgb(0 255 0 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-red-950{--tw-bg-opacity:1;background-color:rgb(69 10 10 / var(--tw-bg-opacity, 1))}.bg-red-950\/30{background-color:rgb(69 10 10 / 0.3)}.bg-red-950\/50{background-color:rgb(69 10 10 / 0.5)}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-zinc-600{--tw-bg-opacity:1;background-color:rgb(82 82 91 / var(--tw-bg-opacity, 1))}.bg-zinc-800{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.bg-zinc-900{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.bg-zinc-900\/90{background-color:rgb(24 24 27 / 0.9)}.bg-zinc-950{--tw-bg-opacity:1;background-color:rgb(9 9 11 / var(--tw-bg-opacity, 1))}.bg-zinc-950\/90{background-color:rgb(9 9 11 / 0.9)}.bg-zinc-950\/95{background-color:rgb(9 9 11 / 0.95)}.bg-amber-950{--tw-bg-opacity:1;background-color:rgb(69 26 3 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-red-700{--tw-gradient-from:#b91c1c var(--tw-gradient-from-position);--tw-gradient-to:rgb(185 28 28 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-red-950\/70{--tw-gradient-from:rgb(69 10 10 / 0.7) var(--tw-gradient-from-position);--tw-gradient-to:rgb(69 10 10 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-red-600{--tw-gradient-to:rgb(220 38 38 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #dc2626 var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-red-600{--tw-gradient-to:#dc2626 var(--tw-gradient-to-position)}.to-zinc-950{--tw-gradient-to:#09090b var(--tw-gradient-to-position)}.to-orange-600{--tw-gradient-to:#ea580c var(--tw-gradient-to-position)}.fill-orange-500{fill:#f97316}.object-cover{object-fit:cover}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-1{padding:0.25rem}.p-2\.5{padding:0.625rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.pt-12{padding-top:3rem}.pt-8{padding-top:2rem}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-\[9px\]{font-size:9px}.font-black{font-weight:900}.font-bold{font-weight:700}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.tracking-wide{letter-spacing:0.025em}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-zinc-100{--tw-text-opacity:1;color:rgb(244 244 245 / var(--tw-text-opacity, 1))}.text-zinc-200{--tw-text-opacity:1;color:rgb(228 228 231 / var(--tw-text-opacity, 1))}.text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.accent-red-600{accent-color:#dc2626}.opacity-0{opacity:0}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_\#ef4444\]{--tw-shadow:0 0 10px #ef4444;--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_16px_rgba\(16\2c 185\2c 129\2c 0\.55\)\]{--tw-shadow:0 0 16px rgba(16,185,129,0.55);--tw-shadow-colored:0 0 16px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_16px_rgba\(220\2c 38\2c 38\2c 0\.55\)\]{--tw-shadow:0 0 16px rgba(220,38,38,0.55);--tw-shadow-colored:0 0 16px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.drop-shadow-\[0_2px_6px_rgba\(0\2c 0\2c 0\2c 0\.95\)\]{--tw-drop-shadow:drop-shadow(0 2px 6px rgba(0,0,0,0.95));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:border-green-500:hover{--tw-border-opacity:1;border-color:rgb(34 197 94 / var(--tw-border-opacity, 1))}.hover\:border-red-500:hover{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.hover\:border-zinc-500:hover{--tw-border-opacity:1;border-color:rgb(113 113 122 / var(--tw-border-opacity, 1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-red-500:hover{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.hover\:bg-red-900:hover{--tw-bg-opacity:1;background-color:rgb(127 29 29 / var(--tw-bg-opacity, 1))}.hover\:bg-red-950:hover{--tw-bg-opacity:1;background-color:rgb(69 10 10 / var(--tw-bg-opacity, 1))}.hover\:bg-zinc-700:hover{--tw-bg-opacity:1;background-color:rgb(63 63 70 / var(--tw-bg-opacity, 1))}.hover\:bg-zinc-900:hover{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.hover\:from-red-600:hover{--tw-gradient-from:#dc2626 var(--tw-gradient-from-position);--tw-gradient-to:rgb(220 38 38 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-red-500:hover{--tw-gradient-to:#ef4444 var(--tw-gradient-to-position)}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-emerald-500:focus{--tw-border-opacity:1;border-color:rgb(16 185 129 / var(--tw-border-opacity, 1))}.focus\:border-red-500:focus{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 640px){.sm\:inline{display:inline}.sm\:h-28{height:7rem}.sm\:w-96{width:24rem}.sm\:w-28{width:7rem}.sm\:max-w-\[145px\]{max-width:145px}.sm\:-translate-y-7{--tw-translate-y:-1.75rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.sm\:gap-11{gap:2.75rem}.sm\:pt-16{padding-top:4rem}.sm\:text-\[10px\]{font-size:10px}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\:text-xs{font-size:0.75rem;line-height:1rem}}</style></head>
+<body class="bg-transparent">
+
+    <!-- BACKGROUND VFX CANVAS LAYER (z-index: 1 — Captain America Flames Behind Circle) -->
+    <canvas id="vfx-back-canvas" width="948" height="828"></canvas>
+
+    <!-- FOREGROUND VFX CANVAS LAYER (z-index: 15 — Iron Man HUD & Thor Lightning) -->
+    <canvas id="vfx-front-canvas" width="948" height="828"></canvas>
+
+    <!-- PURE TRANSPARENT OVERLAY STAGE (z-index: 5 — Sits Cleanly Above Background Flames) -->
+    <main id="overlay-stage" class="relative z-[5] w-full min-h-screen flex flex-col items-center justify-start pt-12 sm:pt-16 px-4">
+        <div id="widget-container" class="flex flex-col items-center transition-transform duration-300 origin-top" style="transform: scale(1);">
+            <!-- Top 3 Circular Badges Container (No background card behind the overlay) -->
+            <div id="likers-grid" class="flex items-end justify-center gap-6 sm:gap-11 pt-8"></div>
+        </div>
+    </main>
+
+    <!-- FLOATING STREAM CONTROLS (Hidden when pressing 'H' or clicking Hide UI) -->
+    
+
+    <!-- COLLAPSIBLE CUSTOMIZE & TIKFINITY LIVE SYNC DRAWER -->
+    
+
+    <!-- Toast Notification -->
+    
+
+    <script>
+        // ==========================================
+        // DEFAULT HERO FALLBACK AVATARS (SVG DATA URIs)
+        // ==========================================
+        const CAP_SHIELD_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+                <defs>
+                    <radialGradient id="capRed" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ef4444"/>
+                        <stop offset="100%" stop-color="#991b1b"/>
+                    </radialGradient>
+                    <radialGradient id="capBlue" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#2563eb"/>
+                        <stop offset="100%" stop-color="#1e3a8a"/>
+                    </radialGradient>
+                </defs>
+                <circle cx="60" cy="60" r="58" fill="url(#capRed)"/>
+                <circle cx="60" cy="60" r="45" fill="#f8fafc"/>
+                <circle cx="60" cy="60" r="33" fill="url(#capRed)"/>
+                <circle cx="60" cy="60" r="21" fill="url(#capBlue)"/>
+                <polygon points="60,42 65,55 79,55 68,63 72,76 60,68 48,76 52,63 41,55 55,55" fill="#ffffff"/>
+            </svg>
+        `);
+
+        const IRON_REACTOR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+                <defs>
+                    <radialGradient id="ironBg" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#1e293b"/>
+                        <stop offset="100%" stop-color="#090d16"/>
+                    </radialGradient>
+                    <linearGradient id="arcGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#e0f2fe"/>
+                        <stop offset="50%" stop-color="#38bdf8"/>
+                        <stop offset="100%" stop-color="#0284c7"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="60" cy="60" r="58" fill="url(#ironBg)"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="14 6"/>
+                <polygon points="30,42 90,42 60,94" fill="none" stroke="url(#arcGlow)" stroke-width="7" stroke-linejoin="round"/>
+                <polygon points="41,48 79,48 60,81" fill="#bae6fd" opacity="0.9"/>
+            </svg>
+        `);
+
+        const THOR_BOLT_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+                <defs>
+                    <radialGradient id="thorBg" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#0c4a6e"/>
+                        <stop offset="100%" stop-color="#080d1a"/>
+                    </radialGradient>
+                </defs>
+                <circle cx="60" cy="60" r="58" fill="url(#thorBg)"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.5"/>
+                <polygon points="66,24 38,64 58,64 52,96 82,54 62,54" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+        `);
+
+        const DEFAULT_LIKERS = [
+            { id: 'user_cap', username: '@captain_steve', likes: 12450, avatar: CAP_SHIELD_SVG, isCustomAvatar: false },
+            { id: 'user_iron', username: '@tony_stark85', likes: 9820, avatar: IRON_REACTOR_SVG, isCustomAvatar: false },
+            { id: 'user_thor', username: '@thor_odinson', likes: 7640, avatar: THOR_BOLT_SVG, isCustomAvatar: false }
+        ];
+
+        const STORAGE_KEY = 'marvel_aura_top3_likers_v2';
+
+        const state = {
+            likers: JSON.parse(JSON.stringify(DEFAULT_LIKERS)),
+            layout: 'podium',
+            scale: 100,
+            bgMode: 'transparent',
+            drawerOpen: false,
+            uiHidden: false,
+            ws: null,
+            wsConnected: false
+        };
+
+        function loadSavedState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed.likers) && parsed.likers.length >= 3) {
+                    const defaultAvatars = [CAP_SHIELD_SVG, IRON_REACTOR_SVG, THOR_BOLT_SVG];
+                    state.likers = parsed.likers.map((item, idx) => ({
+                        ...item,
+                        avatar: item.isCustomAvatar ? item.avatar : (defaultAvatars[idx] || IRON_REACTOR_SVG)
+                    }));
+                }
+                if (parsed.layout) state.layout = parsed.layout;
+                if (parsed.scale) state.scale = parsed.scale;
+            } catch (e) {
+                // Fallback safely to default state
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    likers: state.likers,
+                    layout: state.layout,
+                    scale: state.scale
+                }));
+            } catch (e) {
+                // Ignore storage quota errors
+            }
+        }
+
+        function resetDemoData() {
+            state.likers = JSON.parse(JSON.stringify(DEFAULT_LIKERS));
+            saveState();
+            renderOverlay(true);
+            renderEditorSlots();
+            showToast('RESET TO DEFAULT HEROES');
+        }
+
+        // ==========================================
+        // HERO CRESTS & BADGE RENDERING
+        // ==========================================
+        function getHeroCrestSVG(rank) {
+            if (rank === 1) {
+                // #1 Captain America Winged "A" Tactical Helmet Crest
+                return `
+                    <svg class="w-16 h-11 -mb-3 z-20 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]" viewBox="0 0 120 75">
+                        <path d="M18,52 L2,28 L26,38 L34,26 L38,48 Z" fill="#e2e8f0" stroke="#0f172a" stroke-width="2"/>
+                        <path d="M102,52 L118,28 L94,38 L86,26 L82,48 Z" fill="#e2e8f0" stroke="#0f172a" stroke-width="2"/>
+                        <path d="M32,58 C32,26 88,26 88,58 L76,64 L44,64 Z" fill="#1d4ed8" stroke="#93c5fd" stroke-width="2"/>
+                        <text x="60" y="51" text-anchor="middle" fill="#ffffff" font-family="Orbitron, sans-serif" font-weight="900" font-size="22">A</text>
+                    </svg>
+                `;
+            }
+            if (rank === 2) {
+                // #2 Iron Man Mark 85 Crimson & Gold Faceplate Crest
+                return `
+                    <svg class="w-14 h-10 -mb-2.5 z-20 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]" viewBox="0 0 110 72">
+                        <path d="M28,58 L22,26 L42,14 L68,14 L88,26 L82,58 Z" fill="#b91c1c" stroke="#f59e0b" stroke-width="2.5"/>
+                        <path d="M34,54 L32,28 L46,22 L51,32 L59,32 L64,22 L78,28 L76,54 L66,60 L44,60 Z" fill="#fbbf24"/>
+                        <polygon points="35,38 50,42 47,46 34,43" fill="#38bdf8"/>
+                        <polygon points="75,38 60,42 63,46 76,43" fill="#38bdf8"/>
+                    </svg>
+                `;
+            }
+            // #3 Thor Asgardian Winged Helm Crest
+            return `
+                <svg class="w-15 h-10 -mb-2.5 z-20 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]" viewBox="0 0 120 72">
+                    <path d="M24,52 L4,18 L30,32 L38,16 L42,48 Z" fill="#f1f5f9" stroke="#38bdf8" stroke-width="1.8"/>
+                    <path d="M96,52 L116,18 L90,32 L82,16 L78,48 Z" fill="#f1f5f9" stroke="#38bdf8" stroke-width="1.8"/>
+                    <path d="M35,58 C35,28 85,28 85,58 Z" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+                    <rect x="57" y="34" width="6" height="24" fill="#cbd5e1"/>
+                </svg>
+            `;
+        }
+
+        function getHeroEmblemBadge(rank) {
+            if (rank === 1) {
+                return `<img src="${CAP_SHIELD_SVG}" alt="Cap Shield" class="w-7 h-7 rounded-full border border-white/80 shadow-md">`;
+            }
+            if (rank === 2) {
+                return `<img src="${IRON_REACTOR_SVG}" alt="Arc Reactor" class="w-6 h-6 rounded-full border border-amber-400/90 shadow-md">`;
+            }
+            return `<img src="${THOR_BOLT_SVG}" alt="Thor Storm" class="w-6 h-6 rounded-full border border-sky-400/90 shadow-md">`;
+        }
+
+        function formatLikes(num) {
+            return Number(num || 0).toLocaleString();
+        }
+
+        function renderOverlay(animatePop = false) {
+            const grid = document.getElementById('likers-grid');
+            if (!grid) return;
+
+            const sorted = [...state.likers].sort((a, b) => b.likes - a.likes).slice(0, 3);
+            const displayOrder = state.layout === 'podium'
+                ? [
+                    { liker: sorted[1], rank: 2 },
+                    { liker: sorted[0], rank: 1 },
+                    { liker: sorted[2], rank: 3 }
+                ]
+                : [
+                    { liker: sorted[0], rank: 1 },
+                    { liker: sorted[1], rank: 2 },
+                    { liker: sorted[2], rank: 3 }
+                ];
+
+            grid.innerHTML = displayOrder.map(({ liker, rank }) => {
+                const isFirst = rank === 1;
+                const sizeClass = isFirst ? 'w-24 h-24 sm:w-28 sm:h-28' : 'w-20 h-20 sm:w-22 sm:h-22';
+                const ringClass = isFirst ? 'ring-cap' : (rank === 2 ? 'ring-iron' : 'ring-thor');
+                const floatClass = isFirst ? 'float-1' : (rank === 2 ? 'float-2' : 'float-3');
+                const podiumOffset = (state.layout === 'podium' && isFirst) ? '-translate-y-5 sm:-translate-y-7' : '';
+                const popClass = animatePop ? 'pop-animate' : '';
+                const fallbackAvatar = rank === 1 ? CAP_SHIELD_SVG : (rank === 2 ? IRON_REACTOR_SVG : THOR_BOLT_SVG);
+
+                return `
+                    <div id="badge-slot-${rank}" class="relative flex flex-col items-center transition-transform duration-300 ${podiumOffset} ${floatClass} ${popClass}">
+                        <!-- Top Hero Helmet Crest -->
+                        ${getHeroCrestSVG(rank)}
+
+                        <!-- Circular Red Ring + Real Profile Picture -->
+                        <div id="hero-ring-${rank}" class="relative ${sizeClass} rounded-full hero-red-ring ${ringClass} flex items-center justify-center p-1">
+                            <img src="${liker.avatar || fallbackAvatar}"
+                                 onerror="this.onerror=null;this.src='${fallbackAvatar}';"
+                                 alt="${liker.username}"
+                                 class="w-full h-full rounded-full object-cover bg-zinc-950">
+
+                            <!-- TOP 1 / TOP 2 / TOP 3 Pill (Bottom-Center, Matching Screenshot 235) -->
+                            <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-gradient-to-r from-red-700 via-red-600 to-orange-600 border border-amber-300/80 font-display font-black text-[9px] sm:text-[10px] text-white tracking-wider whitespace-nowrap shadow-md">
+                                TOP ${rank}
+                            </span>
+
+                            <!-- Hero Emblem Mini Badge (Bottom-Right) -->
+                            <div class="absolute -bottom-1 -right-1">
+                                ${getHeroEmblemBadge(rank)}
+                            </div>
+                        </div>
+
+                        <!-- Liker Username & Live Likes Counter -->
+                        <div class="mt-3 flex flex-col items-center">
+                            <div class="name-pill px-2.5 py-0.5 rounded-full max-w-[125px] sm:max-w-[145px]">
+                                <p class="font-display font-bold text-[11px] sm:text-xs text-white truncate tracking-wide">
+                                    ${liker.username}
+                                </p>
+                            </div>
+                            <div class="mt-0.5 flex items-center gap-1 stream-text-outline font-display font-black text-xs sm:text-sm text-amber-300">
+                                <span class="text-red-500">❤</span>
+                                <span>${formatLikes(liker.likes)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function spawnLikeSpark(rank) {
+            const slot = document.getElementById(`badge-slot-${rank}`);
+            if (!slot) return;
+            const spark = document.createElement('div');
+            spark.className = 'like-spark text-red-500 font-bold text-base';
+            spark.style.left = `${40 + Math.random() * 20}%`;
+            spark.style.top = '30%';
+            spark.style.setProperty('--dx', `${(Math.random() - 0.5) * 44}px`);
+            spark.textContent = '❤';
+            slot.appendChild(spark);
+            setTimeout(() => spark.remove(), 920);
+        }
+
+        function recordIncomingLikes(userId, username, count = 1, avatarUrl = null) {
+            const cleanHandle = username.startsWith('@') ? username : `@${username}`;
+            const existing = state.likers.find(
+                l => l.id === userId || l.username.toLowerCase() === cleanHandle.toLowerCase()
+            );
+
+            if (existing) {
+                existing.likes += Number(count) || 1;
+                if (avatarUrl) {
+                    existing.avatar = avatarUrl;
+                    existing.isCustomAvatar = true;
+                }
+            } else {
+                state.likers.push({
+                    id: userId || `user_${Date.now()}`,
+                    username: cleanHandle,
+                    likes: Number(count) || 1,
+                    avatar: avatarUrl || IRON_REACTOR_SVG,
+                    isCustomAvatar: Boolean(avatarUrl)
+                });
+            }
+
+            state.likers.sort((a, b) => b.likes - a.likes);
+            saveState();
+            renderOverlay(true);
+            renderEditorSlots();
+
+            const newRank = state.likers.slice(0, 3).findIndex(
+                l => l.username.toLowerCase() === cleanHandle.toLowerCase()
+            );
+            if (newRank !== -1) {
+                spawnLikeSpark(newRank + 1);
+            }
+        }
+
+        function simulateLiveLikes() {
+            const pool = [
+                { id: 'user_cap', username: '@captain_steve' },
+                { id: 'user_iron', username: '@tony_stark85' },
+                { id: 'user_thor', username: '@thor_odinson' },
+                { id: 'user_wanda', username: '@scarlet_witch' },
+                { id: 'user_peter', username: '@spidey_ny' }
+            ];
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            const boost = 250 + Math.floor(Math.random() * 900);
+            recordIncomingLikes(pick.id, pick.username, boost, null);
+        }
+
+        function updateLikerField(index, field, value) {
+            if (!state.likers[index]) return;
+            if (field === 'likes') {
+                state.likers[index].likes = Math.max(0, parseInt(value, 10) || 0);
+            } else if (field === 'username') {
+                const trimmed = value.trim() || '@viewer';
+                state.likers[index].username = trimmed.startsWith('@') ? trimmed : `@${trimmed}`;
+            } else if (field === 'avatar') {
+                const trimmed = value.trim();
+                if (trimmed) {
+                    state.likers[index].avatar = trimmed;
+                    state.likers[index].isCustomAvatar = true;
+                }
+            }
+            saveState();
+            renderOverlay(false);
+        }
+
+        function handleAvatarUpload(index, input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (state.likers[index] && e.target && e.target.result) {
+                    state.likers[index].avatar = e.target.result;
+                    state.likers[index].isCustomAvatar = true;
+                    saveState();
+                    renderOverlay(true);
+                    renderEditorSlots();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderEditorSlots() {
+            const container = document.getElementById('editor-slots');
+            if (!container) return;
+
+            const sorted = [...state.likers].sort((a, b) => b.likes - a.likes);
+            state.likers = sorted;
+
+            const heroLabels = ['TOP #1 — CAPTAIN AMERICA', 'TOP #2 — IRON MAN', 'TOP #3 — THOR'];
+            container.innerHTML = sorted.slice(0, 3).map((liker, idx) => `
+                <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-display font-bold text-[10px] text-red-400 tracking-wider">${heroLabels[idx]}</span>
+                        <label class="cursor-pointer px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-[10px] font-bold text-zinc-300">
+                            Upload Photo
+                            <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(${idx}, this)">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1.5">
+                        <input type="text" value="${liker.username}"
+                            onchange="updateLikerField(${idx}, 'username', this.value)"
+                            class="col-span-3 px-2 py-1 rounded bg-zinc-950 border border-zinc-700 text-xs text-white font-semibold focus:outline-none focus:border-red-500"
+                            placeholder="@username">
+                        <input type="number" value="${liker.likes}"
+                            onchange="updateLikerField(${idx}, 'likes', this.value)"
+                            class="col-span-2 px-2 py-1 rounded bg-zinc-950 border border-zinc-700 text-xs text-amber-300 font-bold focus:outline-none focus:border-red-500"
+                            placeholder="Likes">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCleanOverlayHTML() {
+            const clone = document.documentElement.cloneNode(true);
+            const controls = clone.querySelector('#floating-controls');
+            const drawer = clone.querySelector('#control-drawer');
+            const toast = clone.querySelector('#toast-banner');
+            const backCanvas = clone.querySelector('#vfx-back-canvas');
+            const frontCanvas = clone.querySelector('#vfx-front-canvas');
+            const grid = clone.querySelector('#likers-grid');
+
+            if (controls) controls.remove();
+            if (drawer) drawer.remove();
+            if (toast) toast.remove();
+            if (backCanvas) backCanvas.innerHTML = '';
+            if (frontCanvas) frontCanvas.innerHTML = '';
+            if (grid) grid.innerHTML = '';
+
+            return '<!DOCTYPE html>\n' + clone.outerHTML;
+        }
+
+        function triggerFileDownload(filename, content, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function copyForTikOpsOverlay() {
+            const cleanHtml = getCleanOverlayHTML();
+            const ta = document.createElement('textarea');
+            ta.value = cleanHtml;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            ta.remove();
+            showToast('COPIED! PASTE INTO TIKOPS -> OVERLAYS -> CUSTOM OVERLAY');
+        }
+
+        function downloadLiveStudioLauncher() {
+            const cleanHtml = getCleanOverlayHTML();
+            triggerFileDownload('marvel-top3-overlay.html', cleanHtml, 'text/html');
+
+            const keyInput = document.getElementById('tikops-key-input');
+            const apiKey = (keyInput && keyInput.value.trim()) ? keyInput.value.trim() : 'tok_RF14orx23tXotN43V61f9EPXdflc84sa';
+
+            // 1-Click Windows .bat script that runs a self-contained Node.js TikOps WebSocket Bridge + HTTP Server on port 8090
+            const batScript = [
+                '@echo off',
+                'title TikOps -> Marvel Top 3 Overlay Bridge (Keep Open While Streaming)',
+                'cd /d "%~dp0"',
+                'set "TIKOPS_API_KEY=' + apiKey + '"',
+                'echo ================================================================',
+                'echo  TIKOPS LIVE BRIDGE + MARVEL TOP 3 OVERLAY SERVER',
+                'echo ================================================================',
+                'echo.',
+                'echo  1. Open TikTok LIVE Studio',
+                'echo  2. Click Add Source (+) -^> Link',
+                'echo  3. Paste this exact URL:',
+                'echo.',
+                'echo     http://localhost:8090/marvel-top3-overlay.html',
+                'echo.',
+                'echo  Keep this window open while you stream!',
+                'echo ================================================================',
+                'echo.',
+                'where node >nul 2>nul',
+                'if errorlevel 1 (',
+                '  echo [!] Node.js not found. Starting basic HTTP server on port 8090...',
+                '  python -m http.server 8090',
+                '  pause',
+                '  exit /b',
+                ')',
+                'if not exist "node_modules\\ws" (',
+                '  echo Installing lightweight WebSocket bridge (one-time setup)...',
+                '  call npm install --no-save --silent ws',
+                ')',
+                'node -e "' +
+                'const http = require(\'http\');' +
+                'const fs = require(\'fs\');' +
+                'const path = require(\'path\');' +
+                'const WebSocket = require(\'ws\');' +
+                'const API_KEY = process.env.TIKOPS_API_KEY;' +
+                'const TIKOPS_URL = \'wss://developer.tikops.io/api/v1/developer/stream\';' +
+                'const server = http.createServer((req, res) => {' +
+                '  const cleanPath = (req.url || \'/\').split(\'?\')[0];' +
+                '  const filePath = path.join(__dirname, cleanPath === \'/\' ? \'marvel-top3-overlay.html\' : cleanPath);' +
+                '  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {' +
+                '    res.writeHead(200, { \'Content-Type\': \'text/html; charset=utf-8\', \'Access-Control-Allow-Origin\': \'*\' });' +
+                '    fs.createReadStream(filePath).pipe(res);' +
+                '  } else {' +
+                '    res.writeHead(404); res.end(\'Not found\');' +
+                '  }' +
+                '});' +
+                'const wss = new WebSocket.Server({ server });' +
+                'const clients = new Set();' +
+                'wss.on(\'connection\', (client) => {' +
+                '  clients.add(client);' +
+                '  client.on(\'close\', () => clients.delete(client));' +
+                '});' +
+                'function connectTikOps() {' +
+                '  console.log(\'[TikOps] Connecting to developer stream...\');' +
+                '  const upstream = new WebSocket(TIKOPS_URL, { headers: { Authorization: \'Bearer \' + API_KEY } });' +
+                '  upstream.on(\'open\', () => {' +
+                '    console.log(\'[TikOps] CONNECTED! Forwarding live likes to TikTok LIVE Studio...\');' +
+                '    upstream.send(JSON.stringify({ type: \'subscribe\', events: [\'like\', \'comment\', \'gift\', \'follow\', \'share\'] }));' +
+                '  });' +
+                '  upstream.on(\'message\', (raw) => {' +
+                '    const text = raw.toString();' +
+                '    try {' +
+                '      const env = JSON.parse(text);' +
+                '      if (env.type === \'like\' && env.data) {' +
+                '        console.log(\'[LIKE]\', env.data.display_name || env.data.unique_id || \'Viewer\', \'+\' + (env.data.like_count || 1));' +
+                '      }' +
+                '    } catch (e) {}' +
+                '    for (const c of clients) { if (c.readyState === WebSocket.OPEN) c.send(text); }' +
+                '  });' +
+                '  upstream.on(\'close\', () => { console.log(\'[TikOps] Reconnecting in 3s...\'); setTimeout(connectTikOps, 3000); });' +
+                '  upstream.on(\'error\', (err) => console.error(\'[TikOps Error]\', err.message));' +
+                '}' +
+                'server.listen(8090, () => { console.log(\'[Server] Overlay ready at http://localhost:8090/marvel-top3-overlay.html\'); connectTikOps(); });' +
+                '"',
+                'pause'
+            ].join('\r\n');
+
+            setTimeout(() => {
+                triggerFileDownload('START-TIKOPS-OVERLAY.bat', batScript, 'application/x-bat');
+            }, 350);
+
+            showToast('DOWNLOADED OVERLAY + TIKOPS BRIDGE (.BAT)!');
+        }
+
+        // ==========================================
+        // TIKOPS & TIKFINITY WEBSOCKET INTEGRATION (AUTO-DISCOVERY + UNIVERSAL PARSER)
+        // ==========================================
+        let wsReconnectTimer = null;
+        let wsAutoEnabled = true;
+        let activeSockets = [];
+
+        // Local TikOps Bridge (port 8090) + common local WebSocket endpoints
+        const DEFAULT_WS_CANDIDATES = [
+            'ws://localhost:8090/',
+            'ws://127.0.0.1:8090/',
+            'ws://localhost:21213/',
+            'ws://127.0.0.1:21213/',
+            'ws://localhost:3000/',
+            'ws://localhost:8080/'
+        ];
+
+        function parseLiveLikePacket(rawData) {
+            try {
+                const packet = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+                if (!packet || typeof packet !== 'object') return null;
+
+                // Support TikOps Developer API ({ type: "like", data: { ... } }), TikFinity, and IndoFinity schemas
+                const rawEvent = (
+                    packet.type ||
+                    packet.event ||
+                    packet.eventType ||
+                    packet.action ||
+                    (packet.data && (packet.data.type || packet.data.event)) ||
+                    ''
+                ).toString().toLowerCase();
+
+                const payload = packet.data && typeof packet.data === 'object' ? packet.data : packet;
+                const userObj = payload.user || payload.sender || payload.author || payload;
+
+                const isLikeEvent =
+                    rawEvent === 'like' ||
+                    rawEvent === 'likes' ||
+                    rawEvent === 'tiktok_like' ||
+                    rawEvent === 'social_like' ||
+                    rawEvent.includes('like') ||
+                    (typeof (payload.like_count ?? payload.likeCount) === 'number' && !rawEvent);
+
+                if (!isLikeEvent) return null;
+
+                const rawHandle =
+                    userObj.unique_id ||
+                    userObj.uniqueId ||
+                    userObj.username ||
+                    userObj.handle ||
+                    payload.unique_id ||
+                    payload.uniqueId ||
+                    payload.username ||
+                    userObj.display_name ||
+                    userObj.nickname ||
+                    userObj.displayName ||
+                    'viewer';
+
+                const uid = (userObj.user_id || userObj.userId || userObj.id || payload.user_id || rawHandle).toString();
+                const cleanHandle = rawHandle.toString().startsWith('@')
+                    ? rawHandle.toString()
+                    : `@${rawHandle}`;
+
+                const count = Number(
+                    payload.like_count ||
+                    payload.likeCount ||
+                    payload.likes ||
+                    payload.count ||
+                    payload.delta ||
+                    1
+                ) || 1;
+
+                const pic =
+                    userObj.profile_picture_url ||
+                    userObj.profilePictureUrl ||
+                    userObj.avatar_url ||
+                    userObj.avatarUrl ||
+                    userObj.avatar ||
+                    userObj.profilePicture ||
+                    payload.profile_picture_url ||
+                    payload.profilePictureUrl ||
+                    payload.avatar_url ||
+                    payload.avatarUrl ||
+                    null;
+
+                return { uid, uname: cleanHandle, count, pic };
+            } catch (err) {
+                return null;
+            }
+        }
+
+        function closeAllSockets() {
+            activeSockets.forEach(s => {
+                try { s.close(); } catch (e) {}
+            });
+            activeSockets = [];
+            state.ws = null;
+            state.wsConnected = false;
+        }
+
+        function connectWebSocket(isAuto = false) {
+            clearTimeout(wsReconnectTimer);
+            if (state.wsConnected && state.ws && state.ws.readyState === WebSocket.OPEN) {
+                return;
+            }
+
+            const urlInput = document.getElementById('ws-url-input');
+            const rawVal = (urlInput ? urlInput.value.trim() : '') || 'auto';
+            const badge = document.getElementById('ws-status-badge');
+            const btn = document.getElementById('ws-connect-btn');
+
+            if (badge) {
+                badge.textContent = isAuto ? 'SCANNING TIKOPS...' : 'CONNECTING...';
+                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-400';
+            }
+
+            const targets = (rawVal.toLowerCase() === 'auto' || rawVal === '')
+                ? DEFAULT_WS_CANDIDATES
+                : [rawVal];
+
+            let connectedOne = false;
+            let closedCount = 0;
+
+            targets.forEach((wsUrl) => {
+                try {
+                    const socket = new WebSocket(wsUrl);
+                    activeSockets.push(socket);
+
+                    socket.onopen = () => {
+                        if (connectedOne) {
+                            try { socket.close(); } catch (e) {}
+                            return;
+                        }
+                        connectedOne = true;
+                        state.ws = socket;
+                        state.wsConnected = true;
+
+                        // Close any other candidate probes
+                        activeSockets.forEach(other => {
+                            if (other !== socket) {
+                                try { other.close(); } catch (e) {}
+                            }
+                        });
+                        activeSockets = [socket];
+
+                        if (badge) {
+                            badge.textContent = 'TIKOPS LIVE SYNCED';
+                            badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400';
+                        }
+                        if (btn) btn.textContent = 'DISCONNECT';
+                        if (!state.uiHidden) showToast(`CONNECTED TO TIKOPS / LIVE STREAM (${wsUrl})`);
+                    };
+
+                    socket.onmessage = (event) => {
+                        const parsedLike = parseLiveLikePacket(event.data);
+                        if (parsedLike) {
+                            recordIncomingLikes(parsedLike.uid, parsedLike.uname, parsedLike.count, parsedLike.pic);
+                        }
+                    };
+
+                    socket.onclose = () => {
+                        closedCount++;
+                        if (state.ws === socket) {
+                            state.wsConnected = false;
+                            state.ws = null;
+                        }
+                        if (!state.wsConnected && closedCount >= targets.length) {
+                            if (badge) {
+                                badge.textContent = wsAutoEnabled ? 'WAITING FOR TIKOPS...' : 'OFFLINE';
+                                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-zinc-800 text-zinc-400';
+                            }
+                            if (btn) btn.textContent = 'CONNECT';
+
+                            if (wsAutoEnabled) {
+                                wsReconnectTimer = setTimeout(() => connectWebSocket(true), 4000);
+                            }
+                        }
+                    };
+
+                    socket.onerror = () => {
+                        // Handled cleanly by onclose
+                    };
+                } catch (e) {
+                    closedCount++;
+                }
+            });
+        }
+
+        function toggleWebSocket() {
+            if (state.wsConnected || activeSockets.length > 0) {
+                wsAutoEnabled = false;
+                clearTimeout(wsReconnectTimer);
+                closeAllSockets();
+                const badge = document.getElementById('ws-status-badge');
+                const btn = document.getElementById('ws-connect-btn');
+                if (badge) {
+                    badge.textContent = 'OFFLINE';
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-zinc-800 text-zinc-400';
+                }
+                if (btn) btn.textContent = 'CONNECT';
+                return;
+            }
+            wsAutoEnabled = true;
+            connectWebSocket(false);
+        }
+
+        // ==========================================
+        // UI & VIEW CONTROLS
+        // ==========================================
+        function showToast(msg) {
+            const banner = document.getElementById('toast-banner');
+            if (!banner) return;
+            banner.textContent = msg;
+            banner.classList.remove('opacity-0');
+            clearTimeout(banner._timer);
+            banner._timer = setTimeout(() => banner.classList.add('opacity-0'), 2600);
+        }
+
+        function toggleDrawer() {
+            const drawer = document.getElementById('control-drawer');
+            if (!drawer) return;
+            state.drawerOpen = !state.drawerOpen;
+            drawer.classList.toggle('translate-x-full', !state.drawerOpen);
+        }
+
+        function toggleAllUI() {
+            state.uiHidden = !state.uiHidden;
+            const controls = document.getElementById('floating-controls');
+            const drawer = document.getElementById('control-drawer');
+            if (controls) {
+                controls.classList.toggle('opacity-0', state.uiHidden);
+                controls.classList.toggle('pointer-events-none', state.uiHidden);
+            }
+            if (state.uiHidden && drawer) {
+                state.drawerOpen = false;
+                drawer.classList.add('translate-x-full');
+                showToast("CONTROLS HIDDEN — PRESS 'H' TO RESTORE");
+            }
+        }
+
+        function setBgMode(mode) {
+            state.bgMode = mode;
+            document.body.classList.remove('bg-transparent', 'bg-checker', 'bg-green', 'bg-dark');
+            document.body.classList.add(`bg-${mode}`);
+            document.querySelectorAll('.bg-btn').forEach(btn => {
+                const active = btn.getAttribute('data-bg') === mode;
+                btn.classList.toggle('border-red-500', active);
+                btn.classList.toggle('bg-red-950/50', active);
+                btn.classList.toggle('text-red-300', active);
+            });
+        }
+
+        function setLayout(layout) {
+            state.layout = layout;
+            const pBtn = document.getElementById('btn-layout-podium');
+            const rBtn = document.getElementById('btn-layout-row');
+            if (pBtn && rBtn) {
+                pBtn.className = layout === 'podium'
+                    ? 'px-3 py-2 rounded-lg border border-red-500 bg-red-950/50 text-red-300 font-bold text-xs transition'
+                    : 'px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-xs hover:border-red-500 transition';
+                rBtn.className = layout === 'row'
+                    ? 'px-3 py-2 rounded-lg border border-red-500 bg-red-950/50 text-red-300 font-bold text-xs transition'
+                    : 'px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-300 font-bold text-xs hover:border-red-500 transition';
+            }
+            saveState();
+            renderOverlay(false);
+        }
+
+        function updateScale(val) {
+            state.scale = Number(val);
+            const label = document.getElementById('scale-label');
+            const container = document.getElementById('widget-container');
+            if (label) label.textContent = `${state.scale}%`;
+            if (container) container.style.transform = `scale(${state.scale / 100})`;
+            saveState();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target && ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+            if (e.key.toLowerCase() === 'h') {
+                toggleAllUI();
+            }
+        });
+
+        // ==========================================
+        // COORDINATE-LOCKED 60FPS CANVAS VFX ENGINE
+        // ==========================================
+        window.HeroVFXEngine = (() => {
+            const backCanvas = document.getElementById('vfx-back-canvas');
+            const frontCanvas = document.getElementById('vfx-front-canvas');
+            const bCtx = backCanvas.getContext('2d');
+            const fCtx = frontCanvas.getContext('2d');
+
+            let w = 0, h = 0;
+            const fireParticles = [];
+            const thorBolts = [];
+            let hudAngle = 0;
+            let boltTimer = 0;
+
+            function resize() {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                backCanvas.width = w;
+                backCanvas.height = h;
+                frontCanvas.width = w;
+                frontCanvas.height = h;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function getRingCenter(rank) {
+                const el = document.getElementById(`hero-ring-${rank}`);
+                if (!el) return null;
+                const r = el.getBoundingClientRect();
+                return { x: r.left + r.width / 2, y: r.top + r.height / 2, radius: r.width / 2 };
+            }
+
+            // #1 Captain America Flames (Rendered Behind Circle on backCanvas)
+            function updateAndDrawCapFlames() {
+                const c = getRingCenter(1);
+                if (!c) return;
+
+                // Spawn rim flames & rising embers behind circle
+                for (let i = 0; i < 4; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const spawnR = c.radius * (0.88 + Math.random() * 0.14);
+                    fireParticles.push({
+                        x: c.x + Math.cos(angle) * spawnR,
+                        y: c.y + Math.sin(angle) * spawnR,
+                        vx: Math.cos(angle) * 0.45 + (Math.random() - 0.5) * 0.6,
+                        vy: -1.1 - Math.random() * 1.6,
+                        size: 9 + Math.random() * 11,
+                        life: 1,
+                        decay: 0.024 + Math.random() * 0.018
+                    });
+                }
+
+                bCtx.save();
+                bCtx.globalCompositeOperation = 'lighter';
+
+                // Subtle 30%-reduced inner fire corona behind ring
+                const grad = bCtx.createRadialGradient(c.x, c.y - 4, c.radius * 0.72, c.x, c.y - 6, c.radius * 1.48);
+                grad.addColorStop(0, 'rgba(255, 190, 60, 0.32)');
+                grad.addColorStop(0.55, 'rgba(255, 68, 0, 0.22)');
+                grad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+                bCtx.fillStyle = grad;
+                bCtx.beginPath();
+                bCtx.arc(c.x, c.y - 5, c.radius * 1.48, 0, Math.PI * 2);
+                bCtx.fill();
+
+                for (let i = fireParticles.length - 1; i >= 0; i--) {
+                    const p = fireParticles[i];
+                    p.x += p.vx + Math.sin(p.life * 10) * 0.35;
+                    p.y += p.vy;
+                    p.life -= p.decay;
+                    p.size *= 0.965;
+
+                    if (p.life <= 0 || p.size < 1) {
+                        fireParticles.splice(i, 1);
+                        continue;
+                    }
+
+                    const pGrad = bCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                    pGrad.addColorStop(0, `rgba(255, 225, 130, ${0.42 * p.life})`);
+                    pGrad.addColorStop(0.45, `rgba(255, 95, 15, ${0.32 * p.life})`);
+                    pGrad.addColorStop(1, 'rgba(220, 20, 20, 0)');
+                    bCtx.fillStyle = pGrad;
+                    bCtx.beginPath();
+                    bCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    bCtx.fill();
+                }
+                bCtx.restore();
+            }
+
+            // #2 Iron Man Crimson/Gold Holographic HUD & Arc Nodes
+            function drawIronManHUD() {
+                const c = getRingCenter(2);
+                if (!c) return;
+                hudAngle += 0.018;
+
+                fCtx.save();
+                fCtx.translate(c.x, c.y);
+
+                // Rotating Gold Outer HUD Arcs + Orbiting Glowing Yellow Repulsor Dots
+                fCtx.strokeStyle = 'rgba(245, 158, 11, 0.55)';
+                fCtx.lineWidth = 1.6;
+                for (let k = 0; k < 3; k++) {
+                    const start = hudAngle + (k * Math.PI * 2) / 3;
+                    fCtx.beginPath();
+                    fCtx.arc(0, 0, c.radius + 7, start, start + 0.85);
+                    fCtx.stroke();
+
+                    // Glowing Yellow/Gold Repulsor Node at Arc Tip
+                    const nx = Math.cos(start) * (c.radius + 7);
+                    const ny = Math.sin(start) * (c.radius + 7);
+                    const goldGlow = fCtx.createRadialGradient(nx, ny, 0, nx, ny, 7);
+                    goldGlow.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
+                    goldGlow.addColorStop(0.45, 'rgba(245, 158, 11, 0.65)');
+                    goldGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+                    fCtx.fillStyle = goldGlow;
+                    fCtx.beginPath();
+                    fCtx.arc(nx, ny, 7, 0, Math.PI * 2);
+                    fCtx.fill();
+
+                    fCtx.fillStyle = '#fef9c3';
+                    fCtx.beginPath();
+                    fCtx.arc(nx, ny, 2.2, 0, Math.PI * 2);
+                    fCtx.fill();
+                }
+
+                // Counter-rotating Cyan Arc Reactor Ring + Orbiting Glowing Blue Dots
+                fCtx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+                fCtx.lineWidth = 1.2;
+                for (let k = 0; k < 2; k++) {
+                    const start = -hudAngle * 1.4 + k * Math.PI;
+                    fCtx.beginPath();
+                    fCtx.arc(0, 0, c.radius + 11, start, start + 0.65);
+                    fCtx.stroke();
+
+                    // Glowing Blue Arc Reactor Node at Arc Tip
+                    const bx = Math.cos(start) * (c.radius + 11);
+                    const by = Math.sin(start) * (c.radius + 11);
+                    const blueGlow = fCtx.createRadialGradient(bx, by, 0, bx, by, 7);
+                    blueGlow.addColorStop(0, 'rgba(224, 242, 254, 0.95)');
+                    blueGlow.addColorStop(0.45, 'rgba(56, 189, 248, 0.65)');
+                    blueGlow.addColorStop(1, 'rgba(56, 189, 248, 0)');
+                    fCtx.fillStyle = blueGlow;
+                    fCtx.beginPath();
+                    fCtx.arc(bx, by, 7, 0, Math.PI * 2);
+                    fCtx.fill();
+
+                    fCtx.fillStyle = '#e0f2fe';
+                    fCtx.beginPath();
+                    fCtx.arc(bx, by, 2.2, 0, Math.PI * 2);
+                    fCtx.fill();
+                }
+
+                fCtx.restore();
+            }
+
+            // #3 Thor Branching Storm Lightning
+            function spawnThorBolt(c) {
+                const startA = Math.random() * Math.PI * 2;
+                const endA = startA + (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 1.2);
+                const pts = [];
+                const steps = 7;
+                for (let s = 0; s <= steps; s++) {
+                    const t = s / steps;
+                    const a = startA + (endA - startA) * t;
+                    const jitter = (s === 0 || s === steps) ? 0 : (Math.random() - 0.5) * 14;
+                    const r = c.radius + 2 + jitter;
+                    pts.push({ x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r });
+                }
+                thorBolts.push({ pts, life: 1 });
+            }
+
+            function drawBolt(pts, alpha) {
+                if (pts.length < 2) return;
+                fCtx.save();
+                fCtx.globalCompositeOperation = 'lighter';
+                fCtx.strokeStyle = `rgba(56, 189, 248, ${0.55 * alpha})`;
+                fCtx.lineWidth = 3.2;
+                fCtx.beginPath();
+                fCtx.moveTo(pts[0].x, pts[0].y);
+                for (let i = 1; i < pts.length; i++) fCtx.lineTo(pts[i].x, pts[i].y);
+                fCtx.stroke();
+
+                fCtx.strokeStyle = `rgba(224, 242, 254, ${0.85 * alpha})`;
+                fCtx.lineWidth = 1.2;
+                fCtx.stroke();
+                fCtx.restore();
+            }
+
+            function updateAndDrawThorLightning() {
+                const c = getRingCenter(3);
+                if (!c) return;
+
+                boltTimer++;
+                if (boltTimer % 11 === 0) {
+                    spawnThorBolt(c);
+                }
+
+                for (let i = thorBolts.length - 1; i >= 0; i--) {
+                    const b = thorBolts[i];
+                    drawBolt(b.pts, b.life);
+                    b.life -= 0.14;
+                    if (b.life <= 0) thorBolts.splice(i, 1);
+                }
+            }
+
+            function loop() {
+                bCtx.clearRect(0, 0, w, h);
+                fCtx.clearRect(0, 0, w, h);
+
+                updateAndDrawCapFlames();
+                drawIronManHUD();
+                updateAndDrawThorLightning();
+
+                requestAnimationFrame(loop);
+            }
+
+            return { start: loop };
+        })();
+
+        // ==========================================
+        // INITIALIZE ON WINDOW LOAD
+        // ==========================================
+        window.onload = function () {
+            loadSavedState();
+            setLayout(state.layout);
+            updateScale(state.scale);
+            renderOverlay(false);
+            renderEditorSlots();
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            if (window.HeroVFXEngine) {
+                window.HeroVFXEngine.start();
+            }
+
+            // Auto-hide controls if loaded with ?clean=1
+            if (window.location.search.includes('clean=1')) {
+                toggleAllUI();
+            }
+
+            // Auto-connect to TikFinity / IndoFinity WebSocket on startup
+            connectWebSocket(true);
+        };
+    </script>
+
+</body></html>
